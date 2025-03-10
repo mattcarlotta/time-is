@@ -2,13 +2,13 @@ import type { JSX } from "solid-js";
 import { Index, batch, createSignal, onCleanup } from "solid-js";
 
 function getTime(date: Date, showAMPM: boolean, showSeconds: boolean): (number | string)[] {
-    const hour = date.getHours() > 12 && showAMPM ? date.getHours() - 12 : date.getHours();
+    const hours = date.getHours() - (date.getHours() > 12 && showAMPM ? 12 : 0);
     const minutes = date.getMinutes();
     const seconds = date.getSeconds();
 
     const time = [
-        Math.floor(hour / 10),
-        hour % 10,
+        Math.floor(hours / 10),
+        hours % 10,
         ":",
         Math.floor(minutes / 10),
         minutes % 10,
@@ -21,7 +21,7 @@ function getTime(date: Date, showAMPM: boolean, showSeconds: boolean): (number |
 }
 
 export default function Clock(): JSX.Element {
-    const [showAMPM, setShowAMPM] = createSignal(true);
+    const [showAMPM, setShowAMPM] = createSignal<boolean>(true);
     const [date, setDate] = createSignal<Date>(new Date());
     const [showSeconds, setShowSeconds] = createSignal<boolean>(true);
     const [formattedDate, setFormattedDate] = createSignal<(number | string)[]>(
