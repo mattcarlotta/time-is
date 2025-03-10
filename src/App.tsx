@@ -1,6 +1,6 @@
 import type { JSX } from "solid-js";
 import { Index, batch, createSignal, onCleanup } from "solid-js";
-import { asDayWithOrdinal, asLongMonth, asLongWeekDay, getTime } from "./utils";
+import { formatAsDayWithOrdinal, formatAsLongMonth, formatAsLongWeekDay, getTime } from "./utils";
 
 export default function Clock(): JSX.Element {
     const [showAMPM, setShowAMPM] = createSignal<boolean>(true);
@@ -43,9 +43,9 @@ export default function Clock(): JSX.Element {
     return (
         <main class="flex flex-col items-center justify-center space-y-2 p-6">
             <p class="text-[6vi]">
-                {asLongWeekDay(date().getDay())}&nbsp;
-                {asLongMonth(date().getMonth())}&nbsp;
-                {asDayWithOrdinal(date().getDate())}&comma;&nbsp;
+                {formatAsLongWeekDay(date().getDay())}&nbsp;
+                {formatAsLongMonth(date().getMonth())}&nbsp;
+                {formatAsDayWithOrdinal(date().getDate())}&comma;&nbsp;
                 {date().getFullYear()}
             </p>
             <h1 class="text-[15vi] font-bold">
