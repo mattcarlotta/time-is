@@ -4,23 +4,22 @@ import { Index, batch, createSignal, onCleanup, onMount } from "solid-js";
 const WINDOW_RATIO = 7;
 
 function getTime(date: Date, showAMPM: boolean): number[] {
-    const time = new Array(6);
-    const hour = date.getHours() > 12 && !showAMPM ? date.getHours() - 12 : date.getHours();
+    const hour = date.getHours() > 12 && showAMPM ? date.getHours() - 12 : date.getHours();
 
-    time[0] = Math.floor(hour / 10);
-    time[1] = hour % 10;
-    time[2] = Math.floor(date.getMinutes() / 10);
-    time[3] = date.getMinutes() % 10;
-    time[4] = Math.floor(date.getSeconds() / 10);
-    time[5] = date.getSeconds() % 10;
-
-    return time;
+    return [
+        Math.floor(hour / 10),
+        hour % 10,
+        Math.floor(date.getMinutes() / 10),
+        date.getMinutes() % 10,
+        Math.floor(date.getSeconds() / 10),
+        date.getSeconds() % 10
+    ];
 }
 
 function Clock(): JSX.Element {
     const [showAMPM, setShowAMPM] = createSignal(true);
     const [time, setTime] = createSignal<Date>(new Date());
-    const [formattedDate, setFormattedDate] = createSignal<number[]>(getTime(time(), !showAMPM()));
+    const [formattedDate, setFormattedDate] = createSignal<number[]>(getTime(time(), showAMPM()));
     const controller = new AbortController();
     const [windowWidth, setWindowWidth] = createSignal(window.innerWidth);
 
@@ -28,7 +27,7 @@ function Clock(): JSX.Element {
         batch(() => {
             setShowAMPM((prev) => !prev);
             const d = new Date();
-            setFormattedDate(getTime(d, !showAMPM()));
+            setFormattedDate(getTime(d, showAMPM()));
             setTime(d);
         });
     };
@@ -36,7 +35,7 @@ function Clock(): JSX.Element {
     const timer: number = setInterval(() => {
         batch((): void => {
             const d = new Date();
-            setFormattedDate(getTime(d, !showAMPM()));
+            setFormattedDate(getTime(d, showAMPM()));
             setTime(d);
         });
     }, 1000);
