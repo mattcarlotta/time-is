@@ -14,17 +14,17 @@ function getTime(date: Date, showAMPM: boolean): number[] {
     ];
 }
 
-function Clock(): JSX.Element {
+export default function Clock(): JSX.Element {
     const [showAMPM, setShowAMPM] = createSignal(true);
-    const [time, setTime] = createSignal<Date>(new Date());
-    const [formattedDate, setFormattedDate] = createSignal<number[]>(getTime(time(), showAMPM()));
+    const [date, setDate] = createSignal<Date>(new Date());
+    const [formattedDate, setFormattedDate] = createSignal<number[]>(getTime(date(), showAMPM()));
 
     const toggleAMPM = (): void => {
         batch(() => {
             setShowAMPM((prev) => !prev);
             const d = new Date();
             setFormattedDate(getTime(d, showAMPM()));
-            setTime(d);
+            setDate(d);
         });
     };
 
@@ -32,11 +32,11 @@ function Clock(): JSX.Element {
         batch((): void => {
             const d = new Date();
             setFormattedDate(getTime(d, showAMPM()));
-            setTime(d);
+            setDate(d);
         });
     }, 1000);
 
-    onCleanup(() => {
+    onCleanup((): void => {
         clearInterval(timer);
     });
 
@@ -52,11 +52,11 @@ function Clock(): JSX.Element {
                             </>
                         )}
                     </Index>
-                    {showAMPM() && <>&nbsp;{time().getHours() >= 12 ? "pm" : "am"}</>}
+                    {showAMPM() && <>&nbsp;{date().getHours() >= 12 ? "pm" : "am"}</>}
                 </time>
             </h1>
             <p class="text-[5vi]">
-                {time().toLocaleDateString(Intl.DateTimeFormat().resolvedOptions().locale, {
+                {date().toLocaleDateString(Intl.DateTimeFormat().resolvedOptions().locale, {
                     weekday: "long",
                     year: "numeric",
                     month: "long",
@@ -68,10 +68,8 @@ function Clock(): JSX.Element {
                 class="cursor-pointer rounded bg-blue-600 p-3 text-white hover:bg-blue-700"
                 onClick={toggleAMPM}
             >
-                Switch to {!showAMPM() ? "12h" : "24h"}
+                Switch to {showAMPM() ? "24h" : "12h"}
             </button>
         </main>
     );
 }
-
-export default Clock;
