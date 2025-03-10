@@ -1,24 +1,6 @@
 import type { JSX } from "solid-js";
 import { Index, batch, createSignal, onCleanup } from "solid-js";
-
-function getTime(date: Date, showAMPM: boolean, showSeconds: boolean): (number | string)[] {
-    const hours = date.getHours() - (date.getHours() > 12 && showAMPM ? 12 : 0);
-    const minutes = date.getMinutes();
-    const seconds = date.getSeconds();
-
-    const time = [
-        Math.floor(hours / 10),
-        hours % 10,
-        ":",
-        Math.floor(minutes / 10),
-        minutes % 10,
-        ":",
-        Math.floor(seconds / 10),
-        seconds % 10
-    ];
-
-    return showSeconds ? time : time.slice(0, -3);
-}
+import { asDayWithOrdinal, asLongMonth, asLongWeekDay, getTime } from "./utils";
 
 export default function Clock(): JSX.Element {
     const [showAMPM, setShowAMPM] = createSignal<boolean>(true);
@@ -61,12 +43,10 @@ export default function Clock(): JSX.Element {
     return (
         <main class="flex flex-col items-center justify-center space-y-2 p-6">
             <p class="text-[6vi]">
-                {date().toLocaleDateString(Intl.DateTimeFormat().resolvedOptions().locale, {
-                    weekday: "long",
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric"
-                })}
+                {asLongWeekDay(date().getDay())}&nbsp;
+                {asLongMonth(date().getMonth())}&nbsp;
+                {asDayWithOrdinal(date().getDate())}&comma;&nbsp;
+                {date().getFullYear()}
             </p>
             <h1 class="text-[15vi] font-bold">
                 <time>
