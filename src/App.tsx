@@ -1,5 +1,4 @@
 import type { JSX } from "solid-js";
-import { Title } from "@solidjs/meta";
 import { Index, batch, createSignal, onCleanup, onMount } from "solid-js";
 
 const WINDOW_RATIO = 7;
@@ -53,9 +52,6 @@ function Clock(): JSX.Element {
 
     return (
         <>
-            <Title>
-                {`${formattedDate()[0]}${formattedDate()[1]}:${formattedDate()[2]}${formattedDate()[3]}:${formattedDate()[4]}${formattedDate()[5]} ${showAMPM() ? ` ${time().getHours() >= 12 ? "pm" : "am"}` : ""} | Time`}
-            </Title>
             <main class="flex flex-col items-center justify-center space-y-4 p-6">
                 <button
                     type="button"

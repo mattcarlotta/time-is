@@ -1,5 +1,4 @@
 /* @refresh reload */
-import { MetaProvider } from "@solidjs/meta";
 import { render } from "solid-js/web";
 import App from "./App";
 import "./index.css";
@@ -12,11 +11,4 @@ if (import.meta.env.DEV && !(root instanceof HTMLElement)) {
     );
 }
 
-render(
-    () => (
-        <MetaProvider>
-            <App />
-        </MetaProvider>
-    ),
-    root!
-);
+render(() => <App />, root!);
