@@ -1,26 +1,32 @@
 import type { JSX } from "solid-js";
 import { Index, batch, createSignal, onCleanup } from "solid-js";
 
-function getTime(date: Date, showAMPM: boolean, showSeconds: boolean): number[] {
+function getTime(date: Date, showAMPM: boolean, showSeconds: boolean): (number | string)[] {
     const hour = date.getHours() > 12 && showAMPM ? date.getHours() - 12 : date.getHours();
+    const minutes = date.getMinutes();
+    const seconds = date.getSeconds();
 
     const time = [
         Math.floor(hour / 10),
         hour % 10,
-        Math.floor(date.getMinutes() / 10),
-        date.getMinutes() % 10,
-        Math.floor(date.getSeconds() / 10),
-        date.getSeconds() % 10
+        ":",
+        Math.floor(minutes / 10),
+        minutes % 10,
+        ":",
+        Math.floor(seconds / 10),
+        seconds % 10
     ];
 
-    return showSeconds ? time : time.slice(0, -2);
+    return showSeconds ? time : time.slice(0, -3);
 }
 
 export default function Clock(): JSX.Element {
     const [showAMPM, setShowAMPM] = createSignal(true);
     const [date, setDate] = createSignal<Date>(new Date());
     const [showSeconds, setShowSeconds] = createSignal<boolean>(true);
-    const [formattedDate, setFormattedDate] = createSignal<number[]>(getTime(date(), showAMPM(), showSeconds()));
+    const [formattedDate, setFormattedDate] = createSignal<(number | string)[]>(
+        getTime(date(), showAMPM(), showSeconds())
+    );
 
     const updateTime = (): void => {
         const d = new Date();
@@ -29,14 +35,14 @@ export default function Clock(): JSX.Element {
     };
 
     const toggleAMPM = (): void => {
-        batch(() => {
+        batch((): void => {
             setShowAMPM((prev) => !prev);
             updateTime();
         });
     };
 
     const toggleSeconds = (): void => {
-        batch(() => {
+        batch((): void => {
             setShowSeconds((prev) => !prev);
             updateTime();
         });
@@ -64,17 +70,8 @@ export default function Clock(): JSX.Element {
             </p>
             <h1 class="text-[15vi] font-bold">
                 <time>
-                    <Index each={formattedDate()}>
-                        {(item, index) => (
-                            <>
-                                <span>{item()}</span>
-                                {(index + 1) % 2 === 0 && index + 1 !== formattedDate().length ? (
-                                    <span>&#58;</span>
-                                ) : null}
-                            </>
-                        )}
-                    </Index>
-                    {showAMPM() && <>&nbsp;{date().getHours() >= 12 ? "pm" : "am"}</>}
+                    <Index each={formattedDate()}>{(item) => <span>{item()}</span>}</Index>
+                    {showAMPM() && <span>&nbsp;{date().getHours() >= 12 ? "pm" : "am"}</span>}
                 </time>
             </h1>
             <div class="flex space-x-4">
